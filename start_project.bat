@@ -46,7 +46,7 @@ cd ..
 REM Start Servers
 echo.
 echo Starting servers...
-start "Backend Server (Port 5000)" cmd /k "cd server && npm start"
+start "Backend Server (Port 5000)" cmd /k "cd server && npm run dev"
 start "Frontend Client (Port 3000)" cmd /k "cd public && npm start"
 
 echo.

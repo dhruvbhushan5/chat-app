@@ -32,12 +32,18 @@ app.use("/api/messages", messageRoutes);
 const server = app.listen(process.env.PORT, () =>
   console.log(`Server started on ${process.env.PORT}`)
 );
+// const io = socket(server, {
+//   cors: {
+//     origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+//     credentials: true,
+//   },
+// });
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:3000",
-    credentials: true,
+    origin: "*",
   },
 });
+
 
 global.onlineUsers = new Map();
 io.on("connection", (socket) => {
@@ -51,7 +57,7 @@ io.on("connection", (socket) => {
       socket.to(sendUserSocket).emit("msg-recieve", { msg: data.msg, from: data.from });
     }
   });
-  
+
   socket.on("disconnect", () => {
     // optional: clean up user from map if needed, though map handles overwrites fine
     // iterating to find key by value is slow in Map but okay for small scale
