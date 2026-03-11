@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
+require("./models/userModel");
+require("./models/messageModel");
+const sequelize = require("./config/db");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
 const app = express();
@@ -10,16 +12,13 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+sequelize
+  .sync()
   .then(() => {
-    console.log("DB Connetion Successfull");
+    console.log("DB Connection Successfull");
   })
   .catch((err) => {
-    console.log(err.message);
+    console.log("DB Connection Error: ", err.message);
   });
 
 app.get("/ping", (_req, res) => {

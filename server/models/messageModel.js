@@ -1,15 +1,20 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/db");
 
-const MessageSchema = mongoose.Schema(
+const Message = sequelize.define(
+  "Message",
   {
-    message: {
-      text: { type: String, required: true },
+    text: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    users: Array,
-    sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    senderId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    receiverId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
@@ -17,4 +22,4 @@ const MessageSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Messages", MessageSchema);
+module.exports = Message;
