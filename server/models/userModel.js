@@ -36,7 +36,6 @@ const User = sequelize.define("User", {
   },
   avatarImage: {
     type: DataTypes.TEXT("long"),
-    defaultValue: "",
   },
 });
 
