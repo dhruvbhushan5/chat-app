@@ -22,6 +22,8 @@ MYSQL_DB="chat_app"
 MYSQL_USER="root"
 MYSQL_PASSWORD=""
 MYSQL_HOST="localhost"
+MYSQL_PORT=3306
+MYSQL_SSL=false
 ```
 
 3. Check `public/.env`:
@@ -52,6 +54,8 @@ MYSQL_DB=
 MYSQL_USER=
 MYSQL_PASSWORD=
 MYSQL_HOST=
+MYSQL_PORT=
+MYSQL_SSL=
 ```
 
 ### Step 2: Deploy the Backend
@@ -72,6 +76,8 @@ MYSQL_DB=your_cloud_database_name
 MYSQL_USER=your_cloud_database_user
 MYSQL_PASSWORD=your_cloud_database_password
 MYSQL_HOST=your_cloud_database_host
+MYSQL_PORT=your_cloud_database_port
+MYSQL_SSL=true_or_false
 CORS_ORIGIN=https://your-vercel-app.vercel.app
 ```
 
