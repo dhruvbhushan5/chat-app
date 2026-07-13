@@ -4,15 +4,15 @@ echo ==========================================
 echo       Setting up Snappy Chat App
 echo ==========================================
 
-REM Check for MongoDB
-echo Checking MongoDB service...
-sc query MongoDB >nul 2>&1
+REM Check for MySQL
+echo Checking MySQL service...
+sc query MySQL80 >nul 2>&1
 if %errorlevel% neq 0 (
-    echo WARNING: MongoDB service not found. Please ensure MongoDB is installed and running!
-    echo If you use Docker, please run 'docker-compose up' instead.
+    echo WARNING: MySQL80 service not found. Please ensure MySQL is installed and running.
+    echo If you use XAMPP or WAMP, start MySQL from its control panel.
 ) else (
-    echo Attempting to start MongoDB service...
-    net start MongoDB 2>nul
+    echo Attempting to start MySQL service...
+    net start MySQL80 2>nul
 )
 
 REM Setup Public (Frontend)
@@ -41,6 +41,15 @@ if not exist node_modules (
     echo Installing backend dependencies...
     call npm install
 )
+echo Creating MySQL database if needed...
+call npm run create-db
+if %errorlevel% neq 0 (
+    echo.
+    echo Could not connect to MySQL or create the database.
+    echo Start MySQL first, then run this file again.
+    pause
+    exit /b 1
+)
 cd ..
 
 REM Start Servers
@@ -53,6 +62,6 @@ echo.
 echo ==========================================
 echo Setup complete! 
 echo two new windows should have opened for backend and frontend.
-echo Please ensure MongoDB is running if backend fails to connect.
+echo Please ensure MySQL is running if backend fails to connect.
 echo ==========================================
 pause

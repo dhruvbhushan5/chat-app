@@ -10,9 +10,9 @@ Snappy is chat application build with the power of MERN Stack. You can find the 
 
 ### Requirements
 - [Nodejs](https://nodejs.org/en/download)
-- [Mongodb](https://www.mongodb.com/docs/manual/administration/install-community/)
+- MySQL, XAMPP, or WAMP
 
-Both should be installed and make sure mongodb is running.
+Both should be installed and make sure MySQL is running.
 ### Installation
 
 #### First Method
@@ -47,7 +47,7 @@ yarn start
 ```
 For Backend.
 
-Open another terminal in folder, Also make sure mongodb is running in background.
+Open another terminal in folder. Also make sure MySQL is running in background.
 ```shell
 cd server
 yarn start

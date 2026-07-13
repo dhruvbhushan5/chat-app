@@ -1,52 +1,106 @@
-# Deployment Guide for Chat App
+# Deployment Guide for Snappy Chat App
 
-Your chat application has two parts:
-1. **Frontend (React)**: Currently deployed on Vercel.
-2. **Backend (Node.js/Express)**: Needs to be deployed separately (e.g., on Render or Railway) because Vercel is optimized for frontend/static sites and doesn't support persistent Node.js servers with WebSockets easily.
-3. **Database (MongoDB)**: Needs a cloud-hosted database (e.g., MongoDB Atlas).
+This project has three pieces:
 
-## Step 1: Set up MongoDB Atlas (Cloud Database)
+1. **Frontend React app** in `public` - this can stay on Vercel.
+2. **Backend Node/Express app** in `server` - deploy this separately on Render, Railway, or a VPS.
+3. **MySQL database** - use a local MySQL server for development, and a cloud MySQL database for deployment.
 
-1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and create a free account.
-2. Create a new Cluster (the free tier is fine).
-3. In "Database Access", create a database user (username and password).
-4. In "Network Access", allow access from anywhere (0.0.0.0/0).
-5. Click "Connect" > "Connect your application" and copy the connection string (it looks like `mongodb+srv://<username>:<password>@cluster0.net/...`).
-6. Replace `<password>` with your actual password.
+Vercel frontend cannot use `http://localhost:5000` after deployment. In production, `localhost` means the Vercel server/user browser itself, not your computer. You must point `REACT_APP_API_URL` to your deployed backend URL.
 
-## Step 2: Deploy the Backend (Server)
+## Local Setup
 
-We recommend using **Render** as it supports Node.js and WebSockets easily.
+1. Start MySQL on your computer.
+   - If you use XAMPP/WAMP, start MySQL from its control panel.
+   - If you installed MySQL as a Windows service, start the MySQL service.
 
-1. Push your code to a GitHub repository if you haven't already.
-2. Go to [Render](https://render.com/) and create a "Web Service".
-3. Connect your GitHub repository.
-4. Configure the service:
-   - **Root Directory**: `server` (Important! This tells Render the backend is in the server folder)
-   - **Build Command**: `npm install`
-   - **Start Command**: `node index.js` (or `npm start`)
-5. **Environment Variables**: Add the following keys:
-   - `MONGO_URL`: The connection string from Step 1.
-   - `PORT`: `5000` (or let Render assign one, usually it ignores this and assigns its own).
-   - `CORS_ORIGIN`: `https://chat-app-nine-topaz-10.vercel.app` (This allows your Vercel frontend to talk to the backend).
-6. Click "Create Web Service".
-7. Once deployed, copy the **URL** (e.g., `https://chat-app-backend.onrender.com`).
+2. Check `server/.env`:
 
-## Step 3: Connect Frontend to Backend
+```env
+PORT=5000
+MYSQL_DB="chat_app"
+MYSQL_USER="root"
+MYSQL_PASSWORD=""
+MYSQL_HOST="localhost"
+```
 
-Now you need to tell your Vercel frontend where the backend lives.
+3. Check `public/.env`:
 
-1. Go to your Vercel project dashboard.
+```env
+REACT_APP_LOCALHOST_KEY="chat-app-current-user"
+REACT_APP_API_URL="http://localhost:5000"
+```
+
+4. Run:
+
+```bat
+start_project.bat
+```
+
+The script creates the MySQL database if needed, then starts backend on port `5000` and frontend on port `3000`.
+
+## Production Deployment
+
+### Step 1: Create a Cloud MySQL Database
+
+Use a provider such as Railway, Aiven, PlanetScale, or any MySQL host.
+
+You need these values:
+
+```env
+MYSQL_DB=
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_HOST=
+```
+
+### Step 2: Deploy the Backend
+
+Deploy the `server` folder to Render, Railway, or another Node.js host.
+
+Recommended backend settings:
+
+- **Root Directory**: `server`
+- **Build Command**: `npm install`
+- **Start Command**: `npm start`
+
+Set these backend environment variables:
+
+```env
+PORT=5000
+MYSQL_DB=your_cloud_database_name
+MYSQL_USER=your_cloud_database_user
+MYSQL_PASSWORD=your_cloud_database_password
+MYSQL_HOST=your_cloud_database_host
+CORS_ORIGIN=https://your-vercel-app.vercel.app
+```
+
+After deployment, copy the backend URL, for example:
+
+```text
+https://your-chat-backend.onrender.com
+```
+
+### Step 3: Connect Vercel Frontend to Backend
+
+In Vercel:
+
+1. Open your frontend project.
 2. Go to **Settings** > **Environment Variables**.
-3. Add a new variable:
-   - **Key**: `REACT_APP_API_URL`
-   - **Value**: The URL of your deployed backend from Step 2 (e.g., `https://chat-app-backend.onrender.com`). Do not add a trailing slash.
-4. **Redeploy** your frontend (go to Deployments > Redeploy) for the changes to take effect.
+3. Add or update:
 
-## Summary
+```env
+REACT_APP_API_URL=https://your-chat-backend.onrender.com
+REACT_APP_LOCALHOST_KEY=chat-app-current-user
+```
 
-- **Frontend**: Talks to `REACT_APP_API_URL`.
-- **Backend**: Listens for requests from `CORS_ORIGIN`.
-- **Database**: Backend connects to `MONGO_URL`.
+Do not use `http://localhost:5000` on Vercel.
 
-Once these are linked, your app should work!
+4. Redeploy the frontend after changing environment variables.
+
+## Quick Checklist
+
+- Local app: MySQL running on your computer.
+- Vercel app: `REACT_APP_API_URL` points to deployed backend, not localhost.
+- Backend host: has MySQL environment variables.
+- Cloud database: accepts connections from the backend host.

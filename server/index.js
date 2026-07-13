@@ -28,6 +28,14 @@ app.get("/ping", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
+app.use((err, _req, res, _next) => {
+  console.error(err);
+  return res.status(500).json({
+    msg: "Server error. Please check that MySQL is running and try again.",
+    status: false,
+  });
+});
+
 const server = app.listen(process.env.PORT, () =>
   console.log(`Server started on ${process.env.PORT}`)
 );
